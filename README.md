@@ -33,7 +33,7 @@ For questions, issues, or feature requests, you can [contact me](http://burnmind
 
 ## Screenshots
 
-The plugin's settings
+Some "hello" translations
 
 ![some hello translations](https://raw.github.com/stathisg/hello-in-all-languages/master/assets/screenshot-1.png)
 
