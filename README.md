@@ -12,10 +12,10 @@
 ## How to configure
 
 1. Open the plugin settings page (Settings -> Hello In All Languages).
-2. Select how the word will be displayes (default, Capitalised, or decapitalised).
-3. Select the default language (to be used if the visitor's IP cannot be determined).
+2. Select how the word will be displayed (capitalised, uppercase, or lowercase).
+3. Select the default language (will be used if the visitor's IP cannot be determined).
 4. Optional, but recommended: Sign up for a free IPInfoDB API key and paste it in the appropriate field.
-5. If you get any errors, change the "way to connect to API" option.
+5. If you receive any errors, change the "way to connect to API" option.
 
 ## How to use
 
@@ -23,7 +23,7 @@ Enter the shortcode **[HELLO-IN-ALL-LANGUAGES]** in any post or page and the tra
 
 ## Support
 
-For questions, issues, or feature requests, you can [contact me](http://burnmind.com/contact), or post them either in the [WordPress Forum](http://wordpress.org/tags/hello-in-all-languages) (make sure to add the tag "hello-in-all-languages"), or in [this](http://burnmind.com/freebies/hello-in-all-languages-wordpress-plugin) blog post.
+For questions, issues, or feature requests, you can either [contact me](http://burnmind.com/contact), or post them either in the [WordPress Forum](http://wordpress.org/tags/hello-in-all-languages) (make sure to add the tag "hello-in-all-languages"), or in [this](http://burnmind.com/freebies/hello-in-all-languages-wordpress-plugin) blog post.
 
 ## Notes
 
@@ -43,4 +43,4 @@ How to use in a post
 
 The plugin's settings
 
-![plugin settings](https://raw.github.com/stathisg/hello-in-all-languages/master/assets/screenshot-3.png)
+![plugin settings](https://raw.github.com/stathisg/hello-in-all-languages/master/assets/screenshot-3.jpg)
