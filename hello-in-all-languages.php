@@ -530,7 +530,7 @@ if (!function_exists("HelloInAllLanguages_Admin"))
         }
         if (function_exists('add_options_page'))
         {
-            add_options_page('Hello In All Languages Settings', 'Hello In All Languages', 9, basename(__FILE__), array(&$helloClass, 'printAdminPage'));
+            add_options_page('Hello In All Languages Settings', 'Hello In All Languages', 'manage_options', basename(__FILE__), array(&$helloClass, 'printAdminPage'));
         }
     }
 }
