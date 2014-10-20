@@ -49,11 +49,21 @@ if (!class_exists("HelloInAllLanguages"))
             $this->updateAdminOptions($options);
         }
 
+        public function deactivatePlugin()
+        {
+            $this->dropTable();
+            $options = $this->getAdminOptions();
+            if(isset($options['how_to_open_url']))
+            {
+                unset($options['how_to_open_url']);
+                $this->updateAdminOptions($options);
+            }
+        }
+
         private function getAdminOptions()
         {
             $adminOptions = array('display' => 'default',
                 'default_country_code' => 'UK',
-                'how_to_open_url' => 'curl',
                 'api_key' => $this->defaultAPIkey);
             $options = get_option($this->adminOptionsName);
             if(!empty($options))
@@ -71,7 +81,7 @@ if (!class_exists("HelloInAllLanguages"))
             update_option($this->adminOptionsName, $adminOptions);
         }
 
-        public function dropTable()
+        private function dropTable()
         {
             $query = "DROP TABLE $this->tableName;";
             $this->wpdb->query($query);
@@ -346,19 +356,8 @@ if (!class_exists("HelloInAllLanguages"))
             $url = "http://api.ipinfodb.com/v3/ip-country/?key={$options['api_key']}&ip=$ip&format=xml";
             $buffer = '';
 
-            if($options['how_to_open_url']=='curl')
-            {
-                $curl = curl_init($url);
-                $timeout = 5;
-                curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
-                curl_setopt($curl,CURLOPT_CONNECTTIMEOUT,$timeout);
-                $buffer = curl_exec($curl);
-                curl_close($curl);
-            }
-            elseif($options['how_to_open_url']=='fopen')
-            {
-                $buffer = file_get_contents($url);
-            }
+            $response = wp_remote_get($url);
+            $buffer = wp_remote_retrieve_body($response);
 
             try
             {
@@ -377,7 +376,7 @@ if (!class_exists("HelloInAllLanguages"))
 
             $hello = $this->wpdb->get_var($this->wpdb->prepare($this->greetingQuery, $countryCode));
 
-                        //if the country code is unknown, $hello will be empty
+            //if the country code is unknown, $hello will be empty
             if(empty($hello))
             {
                 $hello = $this->wpdb->get_var($this->wpdb->prepare($this->greetingQuery, $options['default_country_code']));
@@ -409,11 +408,6 @@ if (!class_exists("HelloInAllLanguages"))
                 if (isset($_POST['language']))
                 {
                     $options['default_country_code'] = $_POST['language'];
-                }
-
-                if (isset($_POST['url']))
-                {
-                    $options['how_to_open_url'] = $_POST['url'];
                 }
 
                 if (isset($_POST['api-key']) && !empty($_POST['api-key']))
@@ -481,16 +475,6 @@ if (!class_exists("HelloInAllLanguages"))
                     <p>
                         <input name="api-key" type="text" value="<?php if($this->defaultAPIkey !== $options['api_key']) { echo $options['api_key']; } ?>" class="large-text" placeholder="leave blank to use default API key" />
                     </p>
-                    <h3>Way to connect to API:</h3>
-                    <p>
-                        <span class="description">There is no need to change this option, unless you get the "Call to undefined function: curl_init()" error. If you try "allow_url_fopen" and get an error similar to "URL file-access is disabled in the server configuration" please contact your hosting company and ask them to enable either cURL or allow_url_fopen.</span>
-                    </p>
-                    <p>
-                        <select name="url">
-                            <option value="curl" <?php if ($options['how_to_open_url']=='curl') { echo ' selected'; } ?>>cURL</option>
-                            <option value="fopen" <?php if ($options['how_to_open_url']=='fopen') { echo ' selected'; } ?>>allow_url_fopen</option>
-                        </select>
-                    </p>
                     <div class="submit">
                         <input type="submit" name="update_HelloInAllLanguagesSettings" value="<?php _e('Update Settings', 'HelloInAllLanguages') ?>" />
                     </div>
@@ -549,7 +533,7 @@ if (!function_exists("HelloInAllLanguages_Admin"))
 if (isset($helloClass))
 {
     register_activation_hook(__FILE__, array(&$helloClass, 'activatePlugin'));
-    register_deactivation_hook(__FILE__, array(&$helloClass, 'dropTable'));
+    register_deactivation_hook(__FILE__, array(&$helloClass, 'deactivatePlugin'));
     add_shortcode('HELLO-IN-ALL-LANGUAGES', array( &$helloClass, 'displayHello'));
     add_action('admin_menu', 'HelloInAllLanguages_Admin');
 }
