@@ -15,7 +15,6 @@
 2. Select how the word will be displayed (capitalised, uppercase, or lowercase).
 3. Select the default language (will be used if the visitor's IP cannot be determined).
 4. Optional, but recommended: Sign up for a free IPInfoDB API key and paste it in the appropriate field.
-5. If you receive any errors, change the "way to connect to API" option.
 
 ## How to use
 

@@ -3,8 +3,8 @@ Contributors: StathisG
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A545FWZ8AB5GL
 Tags: hello in all languages, hello, greeting, hola, hallo, γεια σου, bonjour, marhaba, ola, dobry den
 Requires at least: 2.8
-Tested up to: 3.9.1
-Stable tag: 1.0.4
+Tested up to: 4.0
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,7 +32,6 @@ Hello In All Languages displays a "hello" word translated to the official langua
 2. Select how the word will be displayed (capitalised, uppercase, or lowercase).
 3. Select the default language (will be used if the visitor's IP cannot be determined).
 4. Optional, but recommended: Sign up for a free IPInfoDB API key and paste it in the appropriate field.
-5. If you receive any errors, change the "way to connect to API" option.
 
 = How to use =
 
@@ -51,6 +50,10 @@ Enter the shortcode [HELLO-IN-ALL-LANGUAGES] in any post or page and the transla
 For questions, issues, or feature requests, you can either [contact me](http://burnmind.com/contact), or post them either in the [WordPress Forum](http://wordpress.org/tags/hello-in-all-languages) (make sure to add the tag "hello-in-all-languages"), or in [this](http://burnmind.com/freebies/hello-in-all-languages-wordpress-plugin) blog post.
 
 == Changelog ==
+= 1.0.5 =
+* Some code refactoring.
+* Removed "Way to connect to API" option.
+* When plugin is uninstalled, saved settings are removed from the database.
 = 1.0.4 =
 * Fixed a wpdb warning.
 * Minor content changes.
@@ -68,5 +71,5 @@ For questions, issues, or feature requests, you can either [contact me](http://b
 
 == Upgrade Notice ==
 
-= 1.0.4 =
-Please upgrade to fix a wpdb warning appearing in newer versions of WordPress.
+= 1.0.5 =
+Please upgrade to receive a version of the plugin with a refactored codebase.

@@ -2,7 +2,7 @@
 /*
 Plugin Name: Hello In All Languages
 Plugin URI: http://stathisg.com/projects/hello-in-all-languages/
-Version: 1.0.4
+Version: 1.0.5
 Author: Stathis Goudoulakis
 Author URI: http://stathisg.com/
 Description: Hello In All Languages displays a "hello" word translated to the official language of the country the visitor's IP belongs to.
