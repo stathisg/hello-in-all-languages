@@ -31,7 +31,7 @@ if (!class_exists("HelloInAllLanguages"))
         private $wpdb;
         private $tableName;
         private $greetingQuery;
-        private $adminOptionsName = "HelloInAllLanguagesAdminOptions";
+        private static $adminOptionsName = "HelloInAllLanguagesAdminOptions";
         private $defaultAPIkey = "9200a77e841b835118667753c0320d6c1fdf2b0e8541fccf11b0b0c06e6f3edb";
 
         public function __construct()
@@ -60,12 +60,17 @@ if (!class_exists("HelloInAllLanguages"))
             }
         }
 
+        public function uninstallPlugin()
+        {
+            delete_option(self::$adminOptionsName);
+        }
+
         private function getAdminOptions()
         {
             $adminOptions = array('display' => 'default',
                 'default_country_code' => 'UK',
                 'api_key' => $this->defaultAPIkey);
-            $options = get_option($this->adminOptionsName);
+            $options = get_option(self::$adminOptionsName);
             if(!empty($options))
             {
                 foreach ($options as $key => $option)
@@ -78,7 +83,7 @@ if (!class_exists("HelloInAllLanguages"))
 
         private function updateAdminOptions($adminOptions)
         {
-            update_option($this->adminOptionsName, $adminOptions);
+            update_option(self::$adminOptionsName, $adminOptions);
         }
 
         private function dropTable()
@@ -546,4 +551,6 @@ function helloInAllLanguagesSettingsLink($links) {
 
 $plugin = plugin_basename(__FILE__); 
 add_filter("plugin_action_links_$plugin", 'helloInAllLanguagesSettingsLink' );
+
+register_uninstall_hook(__FILE__, array('HelloInAllLanguages', 'uninstallPlugin'));
 ?>
