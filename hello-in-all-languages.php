@@ -42,6 +42,13 @@ if (!class_exists("HelloInAllLanguages"))
             $this->greetingQuery = "SELECT greeting FROM $this->tableName WHERE country_code=%s";
         }
 
+        public function activatePlugin()
+        {
+            $this->createTable();
+            $options = $this->getAdminOptions();
+            $this->updateAdminOptions($options);
+        }
+
         private function getAdminOptions()
         {
             $adminOptions = array('display' => 'default',
@@ -56,8 +63,12 @@ if (!class_exists("HelloInAllLanguages"))
                     $adminOptions[$key] = $option;
                 }
             }
-            update_option($this->adminOptionsName, $adminOptions);
             return $adminOptions;
+        }
+
+        private function updateAdminOptions($adminOptions)
+        {
+            update_option($this->adminOptionsName, $adminOptions);
         }
 
         public function dropTable()
@@ -66,7 +77,7 @@ if (!class_exists("HelloInAllLanguages"))
             $this->wpdb->query($query);
         }
 
-        public function createTable()
+        private function createTable()
         {
             if($this->wpdb->get_var("show tables like '$this->tableName'") != $this->tableName)
             {
@@ -414,7 +425,7 @@ if (!class_exists("HelloInAllLanguages"))
                     $options['api_key'] = $this->defaultAPIkey;
                 }
 
-                update_option($this->adminOptionsName, $options);
+                $this->updateAdminOptions($options)
                 ?>
                 <div class="updated">
                     <p>
@@ -537,7 +548,7 @@ if (!function_exists("HelloInAllLanguages_Admin"))
 
 if (isset($helloClass))
 {
-    register_activation_hook(__FILE__, array(&$helloClass, 'createTable'));
+    register_activation_hook(__FILE__, array(&$helloClass, 'activatePlugin'));
     register_deactivation_hook(__FILE__, array(&$helloClass, 'dropTable'));
     add_shortcode('HELLO-IN-ALL-LANGUAGES', array( &$helloClass, 'displayHello'));
     add_action('admin_menu', 'HelloInAllLanguages_Admin');
