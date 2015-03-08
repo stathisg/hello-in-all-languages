@@ -2,12 +2,12 @@
 /*
 Plugin Name: Hello In All Languages
 Plugin URI: http://stathisg.com/projects/hello-in-all-languages/
-Version: 1.0.5
+Version: 1.0.6
 Author: Stathis Goudoulakis
 Author URI: http://stathisg.com/
 Description: Hello In All Languages displays a "hello" word translated to the official language of the country the visitor's IP belongs to.
 
-Copyright 2010-2014 Stathis Goudoulakis (me@stathisg.com)
+Copyright 2010-2015 Stathis Goudoulakis (me@stathisg.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ if (!class_exists("HelloInAllLanguages"))
         private $tableName;
         private $greetingQuery;
         private static $adminOptionsName = "HelloInAllLanguagesAdminOptions";
-        private $defaultAPIkey = "9200a77e841b835118667753c0320d6c1fdf2b0e8541fccf11b0b0c06e6f3edb";
 
         public function __construct()
         {
@@ -69,7 +68,7 @@ if (!class_exists("HelloInAllLanguages"))
         {
             $adminOptions = array('display' => 'default',
                 'default_country_code' => 'UK',
-                'api_key' => $this->defaultAPIkey);
+                'api_key' => '');
             $options = get_option(self::$adminOptionsName);
             if(!empty($options))
             {
@@ -358,20 +357,17 @@ if (!class_exists("HelloInAllLanguages"))
             $options = $this->getAdminOptions();
 
             $ip = $_SERVER['REMOTE_ADDR'];
-            $url = "http://api.ipinfodb.com/v3/ip-country/?key={$options['api_key']}&ip=$ip&format=xml";
-            $buffer = '';
+            $url = "http://api.db-ip.com/addrinfo?addr=$ip&api_key={$options['api_key']}";
+            $json = '';
 
             $response = wp_remote_get($url);
-            $buffer = wp_remote_retrieve_body($response);
+            $json = wp_remote_retrieve_body($response);
 
-            try
-            {
-                $xml = new SimpleXMLElement($buffer);
-                $countryCode = $xml -> countryCode;
-            }
-            catch(Exception $e)
-            {
+            $data = json_decode($json);
+            if(empty($data) || isset($data->error)) {
                 $countryCode = '';
+            } else {
+                $countryCode = $data->country;
             }
 
             if(empty($countryCode))
@@ -415,13 +411,9 @@ if (!class_exists("HelloInAllLanguages"))
                     $options['default_country_code'] = $_POST['language'];
                 }
 
-                if (isset($_POST['api-key']) && !empty($_POST['api-key']))
+                if (isset($_POST['api-key']))
                 {
                     $options['api_key'] = $_POST['api-key'];
-                }
-                else
-                {
-                    $options['api_key'] = $this->defaultAPIkey;
                 }
 
                 $this->updateAdminOptions($options)
@@ -438,6 +430,13 @@ if (!class_exists("HelloInAllLanguages"))
                 <div class="icon32" id="icon-options-general"><br/></div>
                 <h2>Hello In All Languages Settings</h2>
                 <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
+                    <h3>DB-IP.com API Key:</h3>
+                    <p>
+                        <span class="description"><a href="https://db-ip.com/api/free" target="_blank">Click here</a> to request a free DB-IP.com API key (you'll just need your email). As soon as you receive it, paste it to the field below. If you don't enter an API key, the "hello" word of the default language will always be displayed.</span>
+                    </p>
+                    <p>
+                        <input name="api-key" type="text" value="<?php echo $options['api_key']; ?>" class="large-text" placeholder="enter DB-IP.com API key" />
+                    </p>
                     <h3>Select how the "hello" word will be displayed:</h3>
                     <p>
                         <input type="radio" id="default-hello" name="display" value="default" <?php if ($options['display'] == "default") { _e('checked="checked"', "HelloInAllLanguages"); }?> />
@@ -473,13 +472,6 @@ if (!class_exists("HelloInAllLanguages"))
                             ?>
                         </select>
                     </p>
-                    <h3>IPInfoDB API Key:</h3>
-                    <p>
-                        <span class="description">Although the plugin will work with its predefined API key, you're advised to use your own API key. <a href="http://ipinfodb.com/register.php" target="_blank">Click here</a> to register for a free IPInfoDB account, to get your personal API key, and paste it to the field below.</span>
-                    </p>
-                    <p>
-                        <input name="api-key" type="text" value="<?php if($this->defaultAPIkey !== $options['api_key']) { echo $options['api_key']; } ?>" class="large-text" placeholder="leave blank to use default API key" />
-                    </p>
                     <div class="submit">
                         <input type="submit" name="update_HelloInAllLanguagesSettings" value="<?php _e('Update Settings', 'HelloInAllLanguages') ?>" />
                     </div>
@@ -490,7 +482,7 @@ if (!class_exists("HelloInAllLanguages"))
                 <ul>
                     <li>To ensure that all the hello translations will be displayed correctly, please use <strong>UTF-8</strong> charset.</li>
                     <li>Please be aware that the plugin may not work properly if you are testing your blog in a local server.</li>
-                    <li>To determine the visitor's physical location based on his IP, the free geolocation API provided by <a href="http://ipinfodb.com/" title="IPInfoDB">IPInfoDB</a> is used.</li>
+                    <li>To determine the visitor's physical location based on his IP, the geolocation API provided by <a href="https://db-ip.com/" title="DB-IP.com">DB-IP.com</a> is being used.</li>
                 </ul>
                 <h2>Support &amp; feedback</h2>
                 <p>For questions, issues, or feature requests, you can either <a href="http://burnmind.com/contact">contact me</a>, or post them either in the <a href="http://wordpress.org/tags/hello-in-all-languages">WordPress Forum</a> (make sure to add the tag "hello-in-all-languages"), or in <a href="http://burnmind.com/freebies/hello-in-all-languages-wordpress-plugin">this</a> blog post.</p>
@@ -504,7 +496,8 @@ if (!class_exists("HelloInAllLanguages"))
                 </ul>
                 <h2>Other links</h2>
                 <ul>
-                    <li>&raquo; <a href="http://burnmind.com">burnmind.com</a></li>
+                    <li>&raquo; <a href="http://burnmind.com">my blog</a></li>
+                    <li>&raquo; <a href="http://inequilibrium.co">my newsletter</a></li>
                     <li>&raquo; <a href="http://twitter.com/stathisg">@stathisg</a></li>
                     <li>&raquo; <a href="http://wordpress.org/extend/plugins/how-old-am-i/">How Old Am I</a> WordPress plugin</li>
                 </ul>
